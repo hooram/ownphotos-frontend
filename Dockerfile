@@ -1,6 +1,10 @@
 FROM ubuntu:16.04
 MAINTAINER ViViDboarder <vividboarder@gmail.com>
 
+ENV BACKEND_HOST http://localhost:8000
+ENV USERNAME admin
+ENV PASSWORD q1W@e3R$
+
 RUN apt-get update && \
     apt-get install -y curl && \
     curl --silent --location https://deb.nodesource.com/setup_6.x | bash && \

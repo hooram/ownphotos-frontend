@@ -12,16 +12,16 @@ function listener() {
   axios.defaults.headers.common['Authorization'] = token;
 }
 
-export var serverAddress = 'http://localhost:8000'
+export var serverAddress = process.env.BACKEND_HOST
 
 export var Server = axios.create({
-  baseURL: 'http://localhost:8000/api/',
+  baseURL: process.env.BACKEND_HOST,
   headers: {
     'Content-Type': 'application/json',
   },
   auth: {
-    username: 'admin',
-    password: 'q1W@e3R$'
+    username: process.env.USERNAME,
+    password: process.env.PASSWORD
   },
   timeout: 10000,
 });
