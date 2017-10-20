@@ -12,16 +12,16 @@ function listener() {
   axios.defaults.headers.common['Authorization'] = token;
 }
 
-export var serverAddress = 'http://localhost:8000'
+export var serverAddress = process.env.REACT_APP_BACKEND_HOST;
 
 export var Server = axios.create({
-  baseURL: 'http://localhost:8000/api/',
+  baseURL: process.env.REACT_APP_BACKEND_HOST+'/api/',
   headers: {
     'Content-Type': 'application/json',
   },
   auth: {
-    username: 'admin',
-    password: 'q1W@e3R$'
+    username: process.env.REACT_APP_ADMIN_USERNAME,
+    password: process.env.REACT_APP_ADMIN_PASSWORD
   },
   timeout: 10000,
 });
