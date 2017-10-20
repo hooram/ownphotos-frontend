@@ -2,8 +2,8 @@ FROM ubuntu:16.04
 MAINTAINER ViViDboarder <vividboarder@gmail.com>
 
 ENV REACT_APP_BACKEND_HOST http://localhost:8000
-ENV REACT_APP_ADMIN_USERNAME admin
-ENV REACT_APP_ADMIN_PASSWORD q1W@e3R$
+ENV REACT_APP_ADMIN_USERNAME admin@dot.com
+ENV REACT_APP_ADMIN_PASSWORD changeme
 
 RUN apt-get update && \
     apt-get install -y curl && \
