@@ -15,7 +15,7 @@ function listener() {
 export var serverAddress = process.env.REACT_APP_BACKEND_HOST;
 
 export var Server = axios.create({
-  baseURL: process.env.REACT_APP_BACKEND_HOST,
+  baseURL: process.env.REACT_APP_BACKEND_HOST+'/api/',
   headers: {
     'Content-Type': 'application/json',
   },
