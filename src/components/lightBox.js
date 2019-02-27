@@ -381,7 +381,7 @@ export class LightBox extends Component {
                             this.props.photoDetails[
                               this.props.idx2hash[this.props.lightboxImageIndex]
                             ].exif_timestamp
-                          ).format("dddd, MMMM Do YYYY, h:mm a")}
+                          ).local().format("dddd, MMMM Do YYYY, h:mm a")}
                         </Item.Description>
                       </Item.Content>
                     </Item>
