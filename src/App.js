@@ -31,6 +31,7 @@ import {AlbumThing} from './layouts/albumThing';
 import {AlbumUser} from './layouts/albumUser';
 import {AlbumUserGallery} from './layouts/albumUserGallery';
 import {AllPhotosHashListViewRV} from './layouts/allPhotosViewHashRV';
+import {AllPhotosGroupedByDate} from './layouts/allPhotosGroupedByDate';
 import {SideMenuNarrow, TopMenu} from './layouts/menubars';
 import {NoTimestampPhotosView} from './layouts/noTimestampPhotosView';
 import {RecentlyAddedPhotos} from './layouts/RecentlyAddedPhotos';
@@ -118,6 +119,7 @@ class App extends Component {
             <Route path="/user/:username" component={UserPublicPage} />
 
             <PrivateRoute path="/things" component={AlbumThing} />
+            <PrivateRoute path="/date" component={AllPhotosGroupedByDate} />
 
             <PrivateRoute path="/recent" component={RecentlyAddedPhotos} />
 
