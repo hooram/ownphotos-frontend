@@ -841,6 +841,10 @@ export class SideMenuNarrow extends Component {
               <Icon name="tags" />
               {"  Things"}
             </Dropdown.Item>
+            <Dropdown.Item as={Link} to="/date">
+              <Icon name="tags" />
+              {"  Date"}
+            </Dropdown.Item>
             <Dropdown.Divider />
             <Dropdown.Item as={Link} to="/useralbums">
               <Icon name="bookmark" />
