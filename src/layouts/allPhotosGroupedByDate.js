@@ -46,7 +46,9 @@ export class AllPhotosGroupedByDate extends Component {
     this.receivedAllProps = this.receivedAllProps.bind(this)
     this.calculateEntrySquareSize = this.calculateEntrySquareSize.bind(this)
     this.groupedPhotosToImageGrids = this.groupedPhotosToImageGrids.bind(this)
+	this.getMonth = this.getMonth.bind(this);
   	this.setState({
+	  month_txt : 0,
       width:  window.innerWidth,
       height: window.innerHeight,
       entrySquareSize:200
@@ -76,6 +78,7 @@ export class AllPhotosGroupedByDate extends Component {
     var entrySquareSize = columnWidth / numEntrySquaresPerRow
     var numEntrySquaresPerRow = numEntrySquaresPerRow
   	this.setState({
+	  month_txt : 0,
       width:  window.innerWidth,
       height: window.innerHeight,
       entrySquareSize:entrySquareSize,
@@ -115,23 +118,37 @@ export class AllPhotosGroupedByDate extends Component {
     var photosGroupedByDate = {}
     photosGroupedByDate['Unknown Date'] = []
 
+	const curMonth = this.state.month_txt;
+
     this.props.photos.map(function(photo){
       if (photo.exif_timestamp != null) {
         var date = photo.exif_timestamp.split('T')[0]
+		var month = date.substring(5,7)
         if (photosGroupedByDate.hasOwnProperty(date)){
-          photosGroupedByDate[date].push(photo)
+			if(month == curMonth || curMonth == 0){
+				photosGroupedByDate[date].push(photo)
+			}
         }
         else{
-          photosGroupedByDate[date] = []
-          photosGroupedByDate[date].push(photo)
+			if(month == curMonth || curMonth == 0) {
+				photosGroupedByDate[date] = []
+				photosGroupedByDate[date].push(photo)
+			}
         }
       }
       else {
-        photosGroupedByDate['Unknown Date'].push(photo)        
+        photosGroupedByDate['Unknown Date'].push(photo)
       }
     })
     return photosGroupedByDate
   }
+
+
+	getMonth(e){
+		this.setState({
+			month_txt : e.target.value
+		});
+	}
 
 
   groupedPhotosToImageGrids(groupedPhotos) {
@@ -195,7 +212,6 @@ export class AllPhotosGroupedByDate extends Component {
     return imageGrids
   }
 
-
   render() {
     var entrySquareSize = this.state.entrySquareSize
     var numEntrySquaresPerRow = this.state.numEntrySquaresPerRow
@@ -218,8 +234,12 @@ export class AllPhotosGroupedByDate extends Component {
         </div>
       )
     }
+	const month_txt = this.state.month_txt;
     return (
       <div>
+		<input
+			value={month_txt}
+			onChange={this.getMonth} />
         {renderable}
       </div>
     )
@@ -239,3 +259,4 @@ AllPhotosGroupedByDate = connect((store)=>{
     fetchedAlbumsDateList: store.albums.fetchedAlbumsDateList,
   }
 })(AllPhotosGroupedByDate)
+
