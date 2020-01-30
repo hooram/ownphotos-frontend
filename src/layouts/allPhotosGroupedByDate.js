@@ -47,8 +47,10 @@ export class AllPhotosGroupedByDate extends Component {
     this.calculateEntrySquareSize = this.calculateEntrySquareSize.bind(this)
     this.groupedPhotosToImageGrids = this.groupedPhotosToImageGrids.bind(this)
 	this.getMonth = this.getMonth.bind(this);
+	this.getDay = this.getDay.bind(this);
   	this.setState({
-	  month_txt : 0,
+	  month_txt : 13,
+	  day_txt : 32,
       width:  window.innerWidth,
       height: window.innerHeight,
       entrySquareSize:200
@@ -78,7 +80,6 @@ export class AllPhotosGroupedByDate extends Component {
     var entrySquareSize = columnWidth / numEntrySquaresPerRow
     var numEntrySquaresPerRow = numEntrySquaresPerRow
   	this.setState({
-	  month_txt : 0,
       width:  window.innerWidth,
       height: window.innerHeight,
       entrySquareSize:entrySquareSize,
@@ -119,22 +120,27 @@ export class AllPhotosGroupedByDate extends Component {
     photosGroupedByDate['Unknown Date'] = []
 
 	const curMonth = this.state.month_txt;
+	const curDay = this.state.day_txt;
 
     this.props.photos.map(function(photo){
       if (photo.exif_timestamp != null) {
         var date = photo.exif_timestamp.split('T')[0]
 		var month = date.substring(5,7)
-        if (photosGroupedByDate.hasOwnProperty(date)){
-			if(month == curMonth || curMonth == 0){
+		var day = date.substring(8,10)
+		
+		if(! photosGroupedByDate.hasOwnProperty(date)){
+			photosGroupedByDate[date] = []
+		}
+		if(curMonth == 13 && curDay == 32){
 				photosGroupedByDate[date].push(photo)
-			}
-        }
-        else{
-			if(month == curMonth || curMonth == 0) {
-				photosGroupedByDate[date] = []
+		} else if(curMonth == month && curDay == 32){
 				photosGroupedByDate[date].push(photo)
-			}
-        }
+		} else if(curMonth == 13 && curDay == day){
+				photosGroupedByDate[date].push(photo)
+		} else if(curMonth == month && curDay == day){
+				photosGroupedByDate[date].push(photo)
+		}
+
       }
       else {
         photosGroupedByDate['Unknown Date'].push(photo)
@@ -147,6 +153,11 @@ export class AllPhotosGroupedByDate extends Component {
 	getMonth(e){
 		this.setState({
 			month_txt : e.target.value
+		});
+	}
+	getDay(e){
+		this.setState({
+			day_txt : e.target.value
 		});
 	}
 
@@ -235,11 +246,15 @@ export class AllPhotosGroupedByDate extends Component {
       )
     }
 	const month_txt = this.state.month_txt;
+	const day_txt = this.state.day_txt;
     return (
       <div>
 		<input
 			value={month_txt}
 			onChange={this.getMonth} />
+		<input
+			value={day_txt}
+			onChange={this.getDay} />
         {renderable}
       </div>
     )
@@ -259,4 +274,3 @@ AllPhotosGroupedByDate = connect((store)=>{
     fetchedAlbumsDateList: store.albums.fetchedAlbumsDateList,
   }
 })(AllPhotosGroupedByDate)
-
