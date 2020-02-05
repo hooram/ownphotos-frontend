@@ -28,7 +28,7 @@ import LazyLoad from 'react-lazyload';
         //     enableImageSelection={false}
         //     rowHeight={250}/>
         // </div>
-var SIDEBAR_WIDTH = 85;
+var SIDEBAR_WIDTH = 8;
 
 class ImagePlaceholder extends Component {
   render () {
@@ -46,11 +46,14 @@ export class AllPhotosGroupedByDate extends Component {
     this.receivedAllProps = this.receivedAllProps.bind(this)
     this.calculateEntrySquareSize = this.calculateEntrySquareSize.bind(this)
     this.groupedPhotosToImageGrids = this.groupedPhotosToImageGrids.bind(this)
+	this.getYear = this.getYear.bind(this);
 	this.getMonth = this.getMonth.bind(this);
-	this.getDay = this.getDay.bind(this);
+	this.searchDay=this.searchDay.bind(this);
   	this.setState({
-	  month_txt : 13,
-	  day_txt : 32,
+	  year_txt : 13,
+	  month_txt : 32,
+          inputYear:13,
+          inputMonth:32,
       width:  window.innerWidth,
       height: window.innerHeight,
       entrySquareSize:200
@@ -76,7 +79,7 @@ export class AllPhotosGroupedByDate extends Component {
 
     var columnWidth = window.innerWidth - SIDEBAR_WIDTH - 5 - 5 - 15
 
-    console.log(columnWidth)
+    //console.log(columnWidth)
     var entrySquareSize = columnWidth / numEntrySquaresPerRow
     var numEntrySquaresPerRow = numEntrySquaresPerRow
   	this.setState({
@@ -93,13 +96,13 @@ export class AllPhotosGroupedByDate extends Component {
         !this.props.fetchingPhotos &&
         this.props.fetchedPhotos) {
 
-      console.log("fetchedPhotos",this.props.fetchedPhotos)
+      /*console.log("fetchedPhotos",this.props.fetchedPhotos)
       console.log("photos",this.props.photos.length)
       console.log("fetchingPhotos",this.props.fetchingPhotos)
       console.log("fetchedPhotos",this.props.fetchedPhotos)
       console.log("albumsDateList",this.props.albumsDateList.length)
       console.log("fetchingAlbumsDateList",this.props.fetchingAlbumsDateList)
-      console.log("fetchedAlbumsDateList",this.props.fetchedAlbumsDateList)
+      console.log("fetchedAlbumsDateList",this.props.fetchedAlbumsDateList)*/
 
 
       return true
@@ -119,25 +122,30 @@ export class AllPhotosGroupedByDate extends Component {
     var photosGroupedByDate = {}
     photosGroupedByDate['Unknown Date'] = []
 
+	const curYear = this.state.year_txt;
 	const curMonth = this.state.month_txt;
-	const curDay = this.state.day_txt;
 
     this.props.photos.map(function(photo){
       if (photo.exif_timestamp != null) {
         var date = photo.exif_timestamp.split('T')[0]
+		var year = date.substring(0,4)
 		var month = date.substring(5,7)
-		var day = date.substring(8,10)
 		
-		if(! photosGroupedByDate.hasOwnProperty(date)){
+		/*if(photosGroupedByDate.hasOwnProperty(date)){
 			photosGroupedByDate[date] = []
-		}
-		if(curMonth == 13 && curDay == 32){
+			
+		}*/
+		if(curYear == 13 && curMonth == 32){
+			photosGroupedByDate[date] = []
 				photosGroupedByDate[date].push(photo)
-		} else if(curMonth == month && curDay == 32){
+		} else if(curYear == year && curMonth == 32){
+				photosGroupedByDate[date] = []
 				photosGroupedByDate[date].push(photo)
-		} else if(curMonth == 13 && curDay == day){
+		} else if(curYear == 13 && curMonth == month){
+				photosGroupedByDate[date] = []
 				photosGroupedByDate[date].push(photo)
-		} else if(curMonth == month && curDay == day){
+		} else if(curYear == year && curMonth == month){
+				photosGroupedByDate[date] = []
 				photosGroupedByDate[date].push(photo)
 		}
 
@@ -148,17 +156,35 @@ export class AllPhotosGroupedByDate extends Component {
     })
     return photosGroupedByDate
   }
+        
 
 
-	getMonth(e){
-		this.setState({
-			month_txt : e.target.value
-		});
+	getYear(e){  
+			
+			this.setState({
+			inputYear:e.target.value
+			//month_txt : e.target.value
+                      });
+		
 	}
-	getDay(e){
+	getMonth(e){    
+
 		this.setState({
-			day_txt : e.target.value
+			inputMonth: e.target.value
+			//day_txt : e.target.value
+                });
+	}
+	searchDay(e)
+	{
+		this.setState({
+		year_txt:this.state.inputYear,
+		month_txt:this.state.inputMonth
+		
 		});
+		//alert(this.state.year_txt)
+		//alert(this.state.month_txt)
+	
+		//alert("search")	
 	}
 
 
@@ -226,7 +252,7 @@ export class AllPhotosGroupedByDate extends Component {
   render() {
     var entrySquareSize = this.state.entrySquareSize
     var numEntrySquaresPerRow = this.state.numEntrySquaresPerRow
-    console.log('received all props?', this.receivedAllProps())
+    //console.log('received all props?', this.receivedAllProps())
     if (this.props.fetchedPhotos){
       var groupedPhotos = this.groupPhotosByDate()
       var renderable = this.groupedPhotosToImageGrids(groupedPhotos)
@@ -245,16 +271,21 @@ export class AllPhotosGroupedByDate extends Component {
         </div>
       )
     }
+	const year_txt = this.state.year_txt;
 	const month_txt = this.state.month_txt;
-	const day_txt = this.state.day_txt;
+        const inputYear=this.state.inputYear;
+	const inputMonth=this.state.inputMonth;
     return (
       <div>
 		<input
-			value={month_txt}
-			onChange={this.getMonth} />
+			value={inputYear}
+			onChange={this.getYear} />
 		<input
-			value={day_txt}
-			onChange={this.getDay} />
+			value={inputMonth}
+			onChange={this.getMonth} />
+		<button onClick={this.searchDay} >
+		Search</button>
+			
         {renderable}
       </div>
     )
