@@ -130,7 +130,7 @@ export class AllPhotosGroupedByDate extends Component {
         var date = photo.exif_timestamp.split('T')[0]
 		var year = date.substring(0,4)
 		var month = date.substring(5,7)
-		
+		alert(curYear, curMonth)
 		/*if(photosGroupedByDate.hasOwnProperty(date)){
 			photosGroupedByDate[date] = []
 			
@@ -181,10 +181,7 @@ export class AllPhotosGroupedByDate extends Component {
 		month_txt:this.state.inputMonth
 		
 		});
-		//alert(this.state.year_txt)
-		//alert(this.state.month_txt)
-	
-		//alert("search")	
+		
 	}
 
 
