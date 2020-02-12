@@ -15,6 +15,10 @@ import {Server, serverAddress} from '../api_client/apiClient'
 import {fetchDateAlbumsList} from '../actions/albumsActions'
 import LazyLoad from 'react-lazyload';
 
+import store from "../store";
+import { searchPhotos } from "../actions/searchActions";
+import { push } from "react-router-redux";
+
 
         // <div style={{
         //     display: "block",
@@ -46,14 +50,15 @@ export class AllPhotosGroupedByDate extends Component {
     this.receivedAllProps = this.receivedAllProps.bind(this)
     this.calculateEntrySquareSize = this.calculateEntrySquareSize.bind(this)
     this.groupedPhotosToImageGrids = this.groupedPhotosToImageGrids.bind(this)
-	this.getYear = this.getYear.bind(this);
-	this.getMonth = this.getMonth.bind(this);
+	//this.getYear = this.getYear.bind(this);
+	//this.getMonth = this.getMonth.bind(this);
 	this.searchDay=this.searchDay.bind(this);
   	this.setState({
-	  year_txt : 13,
-	  month_txt : 32,
-          inputYear:13,
-          inputMonth:32,
+	  //year_txt : 13,
+	  //month_txt : 32,
+          //inputYear:13,
+          //inputMonth:32,
+          inputDate:"*",
       width:  window.innerWidth,
       height: window.innerHeight,
       entrySquareSize:200
@@ -122,20 +127,44 @@ export class AllPhotosGroupedByDate extends Component {
     var photosGroupedByDate = {}
     photosGroupedByDate['Unknown Date'] = []
 
-	const curYear = this.state.year_txt;
-	const curMonth = this.state.month_txt;
-
+	//const curYear = this.state.year_txt;
+	//const curMonth = this.state.month_txt;
+        const targetDate=this.state.inputDate;
     this.props.photos.map(function(photo){
       if (photo.exif_timestamp != null) {
         var date = photo.exif_timestamp.split('T')[0]
 		var year = date.substring(0,4)
 		var month = date.substring(5,7)
-		alert(curYear, curMonth)
+		
+               
+                if(targetDate!=null)
+		{  if(targetDate.includes("*"))
+			{
+				if(targetDate.indexOf("*")==5 && targetDate.substring(0,4)==year)
+				{
+				  
+					photosGroupedByDate[date] = []
+					photosGroupedByDate[date].push(photo)
+				}
+                                else if(targetDate.indexOf("*")==0 && targetDate.substring(2)==month)
+				{	photosGroupedByDate[date] = []
+					photosGroupedByDate[date].push(photo)
+				}
+			}
+                   else if(targetDate.substring(0,4)==year &&targetDate.substring(5)==month)
+			{
+				photosGroupedByDate[date] = []
+				photosGroupedByDate[date].push(photo)
+			}
+						
+		}
+
 		/*if(photosGroupedByDate.hasOwnProperty(date)){
 			photosGroupedByDate[date] = []
 			
 		}*/
-		if(curYear == 13 && curMonth == 32){
+
+		/*if(curYear == 13 && curMonth == 32){
 			photosGroupedByDate[date] = []
 				photosGroupedByDate[date].push(photo)
 		} else if(curYear == year && curMonth == 32){
@@ -147,7 +176,7 @@ export class AllPhotosGroupedByDate extends Component {
 		} else if(curYear == year && curMonth == month){
 				photosGroupedByDate[date] = []
 				photosGroupedByDate[date].push(photo)
-		}
+		}*/
 
       }
       else {
@@ -156,10 +185,8 @@ export class AllPhotosGroupedByDate extends Component {
     })
     return photosGroupedByDate
   }
-        
 
-
-	getYear(e){  
+	/*getYear(e){  
 			
 			this.setState({
 			inputYear:e.target.value
@@ -173,15 +200,17 @@ export class AllPhotosGroupedByDate extends Component {
 			inputMonth: e.target.value
 			//day_txt : e.target.value
                 });
-	}
+	}*/
+
 	searchDay(e)
 	{
+                const ent=prompt(" Enter the year/month that you serach \n if you search all month or all day using * \n like 2017/* or */08")
+                
 		this.setState({
-		year_txt:this.state.inputYear,
-		month_txt:this.state.inputMonth
+		
+                inputDate:ent
 		
 		});
-		
 	}
 
 
@@ -193,7 +222,17 @@ export class AllPhotosGroupedByDate extends Component {
           return (
 			<div style={{
                 width:this.state.entrySquareSize,
-                display:'inline-block'}}>
+                display:'inline-block'}}
+				
+				onClick={() => {
+				  store.dispatch(
+					searchPhotos(date)
+				  );
+				  store.dispatch(push("/search"));
+				}}
+			>
+
+
             <LazyLoad once offset={500} height={this.state.entrySquareSize} placeholder={<ImagePlaceholder size={this.props.entrySquareSize}/>}>
               <Image 
                 style={{
@@ -207,7 +246,7 @@ export class AllPhotosGroupedByDate extends Component {
                     paddingBottom:1}}
                 height={this.state.entrySquareSize} 
                 width={this.state.entrySquareSize} 
-                src={serverAddress+'/media/square_thumbnails_tiny/'+photo.image_hash+'.jpg'}/>
+                src={serverAddress+'/media/square_thumbnails/'+photo.image_hash+'.jpg'}/>
             </LazyLoad>
             </div>
 
@@ -268,20 +307,15 @@ export class AllPhotosGroupedByDate extends Component {
         </div>
       )
     }
-	const year_txt = this.state.year_txt;
-	const month_txt = this.state.month_txt;
-        const inputYear=this.state.inputYear;
-	const inputMonth=this.state.inputMonth;
+	//const year_txt = this.state.year_txt;
+	//const month_txt = this.state.month_txt;
+        //const inputYear=this.state.inputYear;
+	//const inputMonth=this.state.inputMonth;
+        const inputDate=this.state.inputDate;
     return (
       <div>
-		<input
-			value={inputYear}
-			onChange={this.getYear} />
-		<input
-			value={inputMonth}
-			onChange={this.getMonth} />
-		<button onClick={this.searchDay} >
-		Search</button>
+		
+		<button onClick={this.searchDay} >search</button>
 			
         {renderable}
       </div>
@@ -296,7 +330,8 @@ AllPhotosGroupedByDate = connect((store)=>{
   return {
     fetchedPhotos: store.photos.fetchedPhotos,
     fetchingPhotos: store.photos.fetchingPhotos,
-    photos: store.photos.photos,    
+    photos: store.photos.photos,
+    photosGroupedByDate:store.photos.photos,    
     albumsDateList: store.albums.albumsDateList,
     fetchingAlbumsDateList: store.albums.fetchingAlbumsDateList,
     fetchedAlbumsDateList: store.albums.fetchedAlbumsDateList,
