@@ -37,11 +37,11 @@ export class UserPublicPage extends Component {
     ) {
       const photos =
         nextProps.pub.userPublicPhotos[nextProps.match.params.username];
-      if (prevState.idx2hash.length != photos.length) {
+      if (prevState.idx2hash.length !== photos.length) {
         var t0 = performance.now();
         var groupedByDate = _.groupBy(photos, el => {
           if (el.exif_timestamp) {
-            return moment(el.exif_timestamp).format("YYYY-MM-DD");
+            return moment.utc(el.exif_timestamp).format("YYYY-MM-DD");
           } else {
             return "No Timestamp";
           }

@@ -5,7 +5,7 @@ import moment from 'moment'
 
 export function searchPhotos(query) {
   return function(dispatch) {
-    if (query.trim().length == 0) {
+    if (query.trim().length === 0) {
       dispatch({type:"SEARCH_PHOTOS_EMPTY_QUERY_ERROR"})
       dispatch({type:"SEARCH_EMPTY_QUERY_ERROR"})
     } else {
@@ -15,7 +15,7 @@ export function searchPhotos(query) {
         .then((response) => {
           var groupedByDate = _.groupBy(response.data.results,(el)=>{
             if (el.exif_timestamp) {
-                return moment(el.exif_timestamp).format('YYYY-MM-DD')
+                return moment.utc(el.exif_timestamp).format('YYYY-MM-DD')
             } else {
                 return "No Timestamp"
             }
@@ -39,7 +39,7 @@ export function searchPhotos(query) {
 
 export function searchPeople(query) {
     return function(dispatch) {
-        if (query.trim().length == 0) {
+        if (query.trim().length === 0) {
             dispatch({type:"SEARCH_PHOTOS_EMPTY_QUERY_ERROR"}) // remove this line later
             dispatch({type:"SEARCH_EMPTY_QUERY_ERROR"})
         } else {

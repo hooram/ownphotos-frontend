@@ -40,7 +40,7 @@ export class AlbumPersonGallery extends Component {
   }
 
   componentDidMount() {
-    if (this.props.people.length == 0){
+    if (this.props.people.length === 0){
       this.props.dispatch(fetchPeopleAlbums(this.props.match.params.albumID))
     }
   }
@@ -50,12 +50,12 @@ export class AlbumPersonGallery extends Component {
   static getDerivedStateFromProps(nextProps,prevState){
     if (nextProps.albumsPeople.hasOwnProperty(nextProps.match.params.albumID)){
       const photos = nextProps.albumsPeople[nextProps.match.params.albumID].photos
-      if (prevState.idx2hash.length != photos.length) {
+      if (prevState.idx2hash.length !== photos.length) {
 
           var t0 = performance.now();
           var groupedByDate = _.groupBy(photos,(el)=>{
               if (el.exif_timestamp) {
-                  return moment(el.exif_timestamp).format('YYYY-MM-DD')
+                  return moment.utc(el.exif_timestamp).format('YYYY-MM-DD')
               } else {
                   return "No Timestamp"
               }

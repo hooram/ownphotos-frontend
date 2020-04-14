@@ -61,7 +61,7 @@ const SPEED_THRESHOLD = 500;
 
 function fuzzy_match(str, pattern) {
   if (pattern.split("").length > 0) {
-    pattern = pattern.split("").reduce(function(a, b) {
+    pattern = pattern.split("").map(a => _.escapeRegExp(a)).reduce(function(a, b) {
       return a + ".*" + b;
     });
     return new RegExp(pattern).test(str);
@@ -117,8 +117,12 @@ class ModalPersonEdit extends Component {
       this.props.labeledFacesList
     );
 
-    var selectedImageSrcs = this.props.selectedFaces.map(faceID => {
-      return allFaces.filter(face => face.id === faceID)[0].image;
+    var selectedImageIDs = this.props.selectedFaces.map(faceID => {
+      const res = allFaces.filter(face => face.id === faceID)[0].image; 
+      const splitBySlash = res.split('/')
+      console.log(splitBySlash[splitBySlash.length-1])
+      const faceImageID = splitBySlash[splitBySlash.length-1] 
+      return faceImageID
     });
     return (
       <Modal
@@ -146,8 +150,10 @@ class ModalPersonEdit extends Component {
           style={{ height: 100, padding: 5, height: 50, overflowY: "hidden" }}
         >
           <Image.Group>
-            {selectedImageSrcs.map(image => (
-              <SecuredImageJWT key={'selected_image'+image} height={40} width={40} src={image} />
+            {selectedImageIDs.map(image => (
+              <SecuredImageJWT 
+                key={'selected_image'+image} 
+                height={40} width={40} src={serverAddress + '/media/faces/' +image} />
             ))}
           </Image.Group>
         </div>
@@ -314,7 +320,10 @@ export class FaceDashboard extends Component {
     var inferredGroupedByPersonList = _
       .sortBy(_.toPairsIn(inferredGroupedByPerson), el => el[0])
       .map(el => {
-        return { person_name: el[0], faces: el[1] };
+        return {
+          person_name: el[0],
+          faces: _.reverse(_.sortBy(el[1], el2 => el2.person_label_probability)),
+        };
       });
 
     var labeledGroupedByPerson = _.groupBy(
@@ -395,7 +404,7 @@ export class FaceDashboard extends Component {
       selectedFaces.push(faceID);
     }
     this.setState({ selectedFaces: selectedFaces });
-    if (selectedFaces.length == 0) {
+    if (selectedFaces.length === 0) {
       this.setState({ selectMode: false });
     }
   }

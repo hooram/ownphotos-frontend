@@ -41,7 +41,7 @@ export function setPhotosShared(image_hashes, val_shared, target_user) {
             position: "br"
           })
         );
-        if (image_hashes.length == 1) {
+        if (image_hashes.length === 1) {
           dispatch(fetchPhotoDetail(image_hashes[0]));
         }
       })
@@ -162,7 +162,7 @@ export function setPhotosPublic(image_hashes, val_public) {
           // console.log(image_hashes.map(ih=>{return serverAddress+'/media/photos/'+ih+'.jpg'}).join(' '))
           const linksToCopy = image_hashes
             .map(ih => {
-              return serverAddress + "/media/photos/" + ih + ".jpg";
+              return serverAddress.slice(2,serverAddress.length) + "/media/photos/" + ih + ".jpg";
             })
             .join(" ");
 
@@ -182,7 +182,7 @@ export function setPhotosPublic(image_hashes, val_public) {
             position: "br"
           })
         );
-        if (image_hashes.length == 1) {
+        if (image_hashes.length === 1) {
           dispatch(fetchPhotoDetail(image_hashes[0]));
         }
       })
@@ -223,7 +223,7 @@ export function setPhotosFavorite(image_hashes, favorite) {
             position: "br"
           })
         );
-        if (image_hashes.length == 1) {
+        if (image_hashes.length === 1) {
           dispatch(fetchPhotoDetail(image_hashes[0]));
         }
       })
@@ -264,7 +264,7 @@ export function setPhotosHidden(image_hashes, hidden) {
             position: "br"
           })
         );
-        if (image_hashes.length == 1) {
+        if (image_hashes.length === 1) {
           dispatch(fetchPhotoDetail(image_hashes[0]));
         }
       })

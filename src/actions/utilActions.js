@@ -2,6 +2,7 @@ import { notify } from "reapop";
 import { Server } from "../api_client/apiClient";
 import { fetchDateAlbumsPhotoHashList } from "./albumsActions";
 import { fetchInferredFacesList, fetchLabeledFacesList } from "./facesActions";
+import { fetchUserSelfDetails} from './userActions' ; 
 import { fetchPeople } from "./peopleActions";
 
 
@@ -14,6 +15,20 @@ export function fetchJobList(page,page_size=10) {
       })
       .catch(error=>{
         dispatch({ type: 'FETCH_JOB_LIST_REJECTED', payload: error})
+      })
+  }
+}
+
+export function deleteJob(job_id,page=1,page_size=10) {
+  return function(dispatch) {
+    dispatch({ type: "DELETE_JOB" })
+    Server.delete(`jobs/${job_id}`)
+      .then(response=>{
+        dispatch(fetchJobList(page,page_size))
+        dispatch({ type: 'DELETE_JOB_FULFILLED', payload: response.data })
+      })
+      .catch(error=>{
+        dispatch({ type: 'DELETE_JOB_REJECTED', payload: error})
       })
   }
 }
@@ -127,6 +142,7 @@ export function updateUser(user) {
             position: "br"
           })
         )
+        dispatch(fetchUserSelfDetails(user.id))
       })
       .catch(error => {
         dispatch({ type: "UPDATE_USER_REJECTED", payload: error });
@@ -189,6 +205,7 @@ export function fetchWorkerAvailability(prevRunningJob) {
           }
           if (prevRunningJob.job_type_str.toLowerCase() === "scan photos") {
             dispatch(fetchDateAlbumsPhotoHashList());
+            dispatch(rebuildSimilarityIndex())
           }
         }
 
@@ -432,6 +449,19 @@ export function fetchWordCloud() {
       })
       .catch(err => {
         dispatch({ type: "FETCH_WORDCLOUD_REJECTED", payload: err });
+      });
+  };
+}
+
+export function rebuildSimilarityIndex() {
+  return function(dispatch) {
+    dispatch({ type: "REBUILD_SIMILARITY_INDEX" });
+    Server.get(`rebuildfaissindex/`)
+      .then(response => {
+        dispatch({ type: "REBUILD_SIMILARITY_INDEX_FULFILLED", payload: response.data });
+      })
+      .catch(err => {
+        dispatch({ type: "REBUILD_SIMILARITY_INDEX_REJECTED", payload: err });
       });
   };
 }
